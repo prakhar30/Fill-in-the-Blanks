@@ -8,8 +8,9 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource, UIGestureRecognizerDelegate {
 
+    @IBOutlet weak var pickerView: UIPickerView!
     @IBOutlet weak var textView: UITextView!
     var dataArray = [String]()
     var hiddenWord = [String]()
@@ -17,8 +18,16 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        pickerView.isHidden = true
+        let tap = UITapGestureRecognizer(target: self, action: #selector(pickerClose))
+        tap.cancelsTouchesInView = false
+        tap.delegate = self
+        view.addGestureRecognizer(tap)
         getdata()
-        
+    }
+    
+    func pickerClose(){
+        pickerView.isHidden = true
     }
     
     func generateLabel() -> UILabel{
@@ -43,6 +52,7 @@ class ViewController: UIViewController {
                         mainData.remove(at: mainData.startIndex)
                         mainData.remove(at: mainData.index(before: mainData.endIndex))
                         self.stringToArray(data: mainData)
+                        self.pickerView.reloadAllComponents()
                         IJProgressView.shared.hideProgressView()
                     }
                 }
@@ -53,12 +63,19 @@ class ViewController: UIViewController {
     
     func stringToArray(data:String){
         dataArray = data.components(separatedBy: " ")
+        for i in 0..<dataArray.count{
+            dataArray[i] = dataArray[i].trimmingCharacters(in: .illegalCharacters)
+        }
         for _ in 0..<4 {
             self.dataArray.remove(at: 0)
         }
         for i in 0..<4 {
-            let randomIndex = Int(arc4random_uniform(UInt32(dataArray.count)))
-            let randomWord = dataArray[randomIndex]
+            var randomIndex = Int(arc4random_uniform(UInt32(dataArray.count)))
+            var randomWord = dataArray[randomIndex]
+            while(randomWord.characters.count < 10){
+                randomIndex = Int(arc4random_uniform(UInt32(dataArray.count)))
+                randomWord = dataArray[randomIndex]
+            }
             hiddenWord.append(randomWord)
             hiddenWordLocation.append(randomIndex)
             dataArray[randomIndex] = "(___\(i)___)"
@@ -76,7 +93,7 @@ class ViewController: UIViewController {
             let tRange = textView.textRange(from: start, to: end)
             let rect = textView.firstRect(for: tRange!)
             
-            let button = UIButton(frame: CGRect(x: rect.minX, y: rect.minY, width: 68, height: 20))
+            let button = UIButton(frame: CGRect(x: rect.minX - 20, y: rect.minY - 20, width: 88, height: 40))
             button.backgroundColor = .clear
             button.setTitle("", for: .normal)
             button.tag = i
@@ -91,6 +108,23 @@ class ViewController: UIViewController {
     
     func buttonAction(sender: UIButton!) {
         print("Button tapped \(sender.tag)")
+        pickerView.isHidden = false
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return hiddenWord.count
+    }
+    
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return "\(hiddenWord[row])"
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        print(hiddenWord[row])
     }
 
     override func didReceiveMemoryWarning() {
