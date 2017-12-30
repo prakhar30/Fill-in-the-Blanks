@@ -12,6 +12,8 @@ class ViewController: UIViewController {
 
     @IBOutlet weak var textView: UITextView!
     var dataArray = [String]()
+    var hiddenWord = [String]()
+    var hiddenWordLocation = [Int]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,10 +42,6 @@ class ViewController: UIViewController {
                         var mainData = "\(json![2])"
                         mainData.remove(at: mainData.startIndex)
                         mainData.remove(at: mainData.index(before: mainData.endIndex))
-//                        self.textView.text = "\(mainData)"
-                        let tapGesture: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.tapResponse(recognizer:)))
-                        tapGesture.numberOfTapsRequired = 1
-                        self.textView.addGestureRecognizer(tapGesture)
                         self.stringToArray(data: mainData)
                         IJProgressView.shared.hideProgressView()
                     }
@@ -53,26 +51,46 @@ class ViewController: UIViewController {
         }
     }
     
-    func tapResponse(recognizer: UITapGestureRecognizer) {
-        let location: CGPoint = recognizer.location(in: textView)
-        let position: CGPoint = CGPoint(x: location.x, y: location.y)
-        let tapPosition: UITextPosition = textView.closestPosition(to: position)!
-        let textRange: UITextRange = textView.tokenizer.rangeEnclosingPosition(tapPosition, with: .word, inDirection: 1)!
-        
-        let tappedWord: String = textView.text(in: textRange)!
-        print("\(tappedWord) \(tappedWord.characters.count)")
-    }
-    
     func stringToArray(data:String){
         dataArray = data.components(separatedBy: " ")
         for _ in 0..<4 {
             self.dataArray.remove(at: 0)
         }
-        var text = ""
-        for index in 0..<dataArray.count {
-            text += "\(dataArray[index]) "
+        for i in 0..<4 {
+            let randomIndex = Int(arc4random_uniform(UInt32(dataArray.count)))
+            let randomWord = dataArray[randomIndex]
+            hiddenWord.append(randomWord)
+            hiddenWordLocation.append(randomIndex)
+            dataArray[randomIndex] = "(___\(i)___)"
+            var text = ""
+            for index in 0..<dataArray.count {
+                text += "\(dataArray[index]) "
+            }
+            textView.text = text
+            
+            let copyText = text as NSString
+            let range = copyText.range(of: "(___\(i)___)", options: .literal, range: NSMakeRange(0, copyText.length))
+            textView.layoutManager.ensureLayout(for: textView.textContainer)
+            let start = textView.position(from: textView.beginningOfDocument, offset: range.location)!
+            let end = textView.position(from: start, offset: range.length)!
+            let tRange = textView.textRange(from: start, to: end)
+            let rect = textView.firstRect(for: tRange!)
+            
+            let button = UIButton(frame: CGRect(x: rect.minX, y: rect.minY, width: 68, height: 20))
+            button.backgroundColor = .clear
+            button.setTitle("", for: .normal)
+            button.tag = i
+            button.addTarget(self, action: #selector(buttonAction), for: .touchUpInside)
+            self.textView.addSubview(button)
         }
-        textView.text = text
+
+
+        print(hiddenWord)
+        print(hiddenWordLocation)
+    }
+    
+    func buttonAction(sender: UIButton!) {
+        print("Button tapped \(sender.tag)")
     }
 
     override func didReceiveMemoryWarning() {
