@@ -12,9 +12,12 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
 
     @IBOutlet weak var pickerView: UIPickerView!
     @IBOutlet weak var textView: UITextView!
+    var inputData = ""
     var dataArray = [String]()
     var hiddenWord = [String]()
     var hiddenWordLocation = [Int]()
+    var userGuess = ["", "", "", "", "", "", "", "", "", ""]
+    var buttonPressed = -1
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,13 +33,8 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         pickerView.isHidden = true
     }
     
-    func generateLabel() -> UILabel{
-        let lblNew = UILabel()
-        lblNew.backgroundColor = UIColor.blue
-        lblNew.text = "Test"
-        lblNew.textColor = UIColor.white
-        lblNew.translatesAutoresizingMaskIntoConstraints = false
-        return lblNew
+    @IBAction func finishGameButton(_ sender: Any) {
+        print(userGuess)
     }
     
     func getdata(){
@@ -52,6 +50,10 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
                         mainData.remove(at: mainData.startIndex)
                         mainData.remove(at: mainData.index(before: mainData.endIndex))
                         self.stringToArray(data: mainData)
+                        self.inputData = mainData
+//                        let tapGesture: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.tapResponse(recognizer:)))
+//                        tapGesture.numberOfTapsRequired = 1
+//                        self.textView.addGestureRecognizer(tapGesture)
                         self.pickerView.reloadAllComponents()
                         IJProgressView.shared.hideProgressView()
                     }
@@ -61,6 +63,18 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         }
     }
     
+//    func tapResponse(recognizer: UITapGestureRecognizer) {
+//        let location: CGPoint = recognizer.location(in: textView)
+//        let position: CGPoint = CGPoint(x: location.x, y: location.y)
+//        let tapPosition: UITextPosition = textView.closestPosition(to: position)!
+//        print("tap at \(position.x) \(position.y)")
+//        
+//        if let textRange: UITextRange = textView.tokenizer.rangeEnclosingPosition(tapPosition, with: .word, inDirection: 1) {
+//            let tappedWord: String = textView.text(in: textRange)!
+//            print("\(tappedWord) \(tappedWord.characters.count)")
+//        }
+//    }
+    
     func stringToArray(data:String){
         dataArray = data.components(separatedBy: " ")
         for i in 0..<dataArray.count{
@@ -69,7 +83,7 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         for _ in 0..<4 {
             self.dataArray.remove(at: 0)
         }
-        for i in 0..<4 {
+        for i in 0..<10 {
             var randomIndex = Int(arc4random_uniform(UInt32(dataArray.count)))
             var randomWord = dataArray[randomIndex]
             while(randomWord.characters.count < 10){
@@ -84,8 +98,10 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
                 text += "\(dataArray[index]) "
             }
             textView.text = text
-            
-            let copyText = text as NSString
+        }
+        
+        for i in 0..<10 {
+            let copyText = textView.text as NSString
             let range = copyText.range(of: "(___\(i)___)", options: .literal, range: NSMakeRange(0, copyText.length))
             textView.layoutManager.ensureLayout(for: textView.textContainer)
             let start = textView.position(from: textView.beginningOfDocument, offset: range.location)!
@@ -93,8 +109,9 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
             let tRange = textView.textRange(from: start, to: end)
             let rect = textView.firstRect(for: tRange!)
             
-            let button = UIButton(frame: CGRect(x: rect.minX - 20, y: rect.minY - 20, width: 88, height: 40))
-            button.backgroundColor = .clear
+            let button = UIButton(frame: CGRect(x: rect.minX, y: rect.minY, width: 50, height: 20))
+            button.backgroundColor = .green
+            button.alpha = 0.5
             button.setTitle("", for: .normal)
             button.tag = i
             button.addTarget(self, action: #selector(buttonAction), for: .touchUpInside)
@@ -108,6 +125,7 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     
     func buttonAction(sender: UIButton!) {
         print("Button tapped \(sender.tag)")
+        buttonPressed = sender.tag
         pickerView.isHidden = false
     }
     
@@ -125,13 +143,13 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         print(hiddenWord[row])
+        userGuess[buttonPressed] = hiddenWord[row]
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
 
 }
 
