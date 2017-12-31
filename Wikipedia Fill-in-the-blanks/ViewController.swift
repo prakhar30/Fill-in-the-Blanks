@@ -17,6 +17,7 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     var hiddenWord = [String]()
     var hiddenWordLocation = [Int]()
     var userGuess = ["", "", "", "", "", "", "", "", "", ""]
+    var shuffledHiddenWords = ["", "", "", "", "", "", "", "", "", ""]
     var buttonPressed = -1
     
     override func viewDidLoad() {
@@ -35,6 +36,11 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     
     @IBAction func finishGameButton(_ sender: Any) {
         print(userGuess)
+        if (hiddenWord == userGuess){
+            print("You win")
+        }else{
+            print("you chutiya")
+        }
     }
     
     func getdata(){
@@ -117,10 +123,8 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
             button.addTarget(self, action: #selector(buttonAction), for: .touchUpInside)
             self.textView.addSubview(button)
         }
-
-
+        shuffledHiddenWords = shuffleArray(array: hiddenWord)
         print(hiddenWord)
-        print(hiddenWordLocation)
     }
     
     func buttonAction(sender: UIButton!) {
@@ -130,7 +134,7 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return hiddenWord.count
+        return shuffledHiddenWords.count
     }
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
@@ -138,12 +142,23 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     }
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return "\(hiddenWord[row])"
+        return "\(shuffledHiddenWords[row])"
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        print(hiddenWord[row])
-        userGuess[buttonPressed] = hiddenWord[row]
+        userGuess[buttonPressed] = shuffledHiddenWords[row]
+    }
+    
+    func shuffleArray(array: [String]) -> [String] {
+        
+        var tempArray = array
+        for index in 0...array.count - 1 {
+            let randomNumber = arc4random_uniform(UInt32(tempArray.count - 1))
+            let randomIndex = Int(randomNumber)
+            tempArray[randomIndex] = array[index]
+        }
+        
+        return tempArray
     }
 
     override func didReceiveMemoryWarning() {
