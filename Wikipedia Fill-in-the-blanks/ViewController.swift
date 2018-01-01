@@ -16,8 +16,10 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     var dataArray = [String]()
     var hiddenWord = [String]()
     var hiddenWordLocation = [Int]()
+    var buttons = [UIButton]()
     var userGuess = ["", "", "", "", "", "", "", "", "", ""]
     var shuffledHiddenWords = ["", "", "", "", "", "", "", "", "", ""]
+    var previousSelectedWord = ["", "", "", "", "", "", "", "", "", ""]
     var buttonPressed = -1
     
     override func viewDidLoad() {
@@ -56,6 +58,7 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
                         mainData.remove(at: mainData.startIndex)
                         mainData.remove(at: mainData.index(before: mainData.endIndex))
                         self.stringToArray(data: mainData)
+                        self.buttonOverText()
                         self.inputData = mainData
 //                        let tapGesture: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.tapResponse(recognizer:)))
 //                        tapGesture.numberOfTapsRequired = 1
@@ -105,7 +108,27 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
             }
             textView.text = text
         }
-        
+    }
+    
+    func replaceSelectedWordIntext(){
+        print("guessed word \(userGuess[buttonPressed])")
+//        for i in 0..<dataArray.count{
+//            if(dataArray[i] == "(___\(buttonPressed)___)" || (dataArray[i] == userGuess[buttonPressed] && i == hiddenWordLocation[buttonPressed])){
+//                dataArray[i] = userGuess[buttonPressed]
+//                break
+//            }
+//        }
+        dataArray[hiddenWordLocation[buttonPressed]] = userGuess[buttonPressed]
+        var text = ""
+        for index in 0..<dataArray.count {
+            text += "\(dataArray[index]) "
+        }
+        textView.text = text
+        changeButtonLocationForReplacedWord(button: buttons[buttonPressed], onWord: userGuess[buttonPressed])
+        changeButtonLocationForOtherWords(changedIndex: buttonPressed)
+    }
+    
+    func buttonOverText(){
         for i in 0..<10 {
             let copyText = textView.text as NSString
             let range = copyText.range(of: "(___\(i)___)", options: .literal, range: NSMakeRange(0, copyText.length))
@@ -122,9 +145,41 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
             button.tag = i
             button.addTarget(self, action: #selector(buttonAction), for: .touchUpInside)
             self.textView.addSubview(button)
+            buttons.append(button)
         }
-        shuffledHiddenWords = shuffleArray(array: hiddenWord)
+        shuffledHiddenWords = hiddenWord
+        //        shuffledHiddenWords = shuffleArray(array: hiddenWord)
+        //        shuffledHiddenWords = shuffleArray(array: hiddenWord)
         print(hiddenWord)
+    }
+    
+    func changeButtonLocationForReplacedWord(button:UIButton, onWord:String){
+        let copyText = textView.text as NSString
+        let range = copyText.range(of: onWord, options: .literal, range: NSMakeRange(0, copyText.length))
+        textView.layoutManager.ensureLayout(for: textView.textContainer)
+        let start = textView.position(from: textView.beginningOfDocument, offset: range.location)!
+        let end = textView.position(from: start, offset: range.length)!
+        let tRange = textView.textRange(from: start, to: end)
+        let rect = textView.firstRect(for: tRange!)
+        button.frame = CGRect(x: rect.minX, y: rect.minY, width: 50, height: 20)
+    }
+    
+    func changeButtonLocationForOtherWords(changedIndex:Int){
+        for i in 0..<10 {
+            if(i != changedIndex){
+                let copyText = textView.text as NSString
+                let range = copyText.range(of: "(___\(i)___)", options: .literal, range: NSMakeRange(0, copyText.length))
+                textView.layoutManager.ensureLayout(for: textView.textContainer)
+                if (range.location < 50000){
+                    let start = textView.position(from: textView.beginningOfDocument, offset: range.location)!
+                    let end = textView.position(from: start, offset: range.length)!
+                    let tRange = textView.textRange(from: start, to: end)
+                    let rect = textView.firstRect(for: tRange!)
+                    buttons[i].frame = CGRect(x: rect.minX, y: rect.minY, width: 50, height: 20)
+                }
+
+            }
+        }
     }
     
     func buttonAction(sender: UIButton!) {
@@ -147,18 +202,7 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         userGuess[buttonPressed] = shuffledHiddenWords[row]
-    }
-    
-    func shuffleArray(array: [String]) -> [String] {
-        
-        var tempArray = array
-        for index in 0...array.count - 1 {
-            let randomNumber = arc4random_uniform(UInt32(tempArray.count - 1))
-            let randomIndex = Int(randomNumber)
-            tempArray[randomIndex] = array[index]
-        }
-        
-        return tempArray
+        replaceSelectedWordIntext()
     }
 
     override func didReceiveMemoryWarning() {
