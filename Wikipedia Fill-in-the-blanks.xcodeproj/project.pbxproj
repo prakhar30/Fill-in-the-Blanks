@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		95075EFA1FFA4AEA0016D0AC /* ScoreScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95075EF91FFA4AEA0016D0AC /* ScoreScreen.swift */; };
+		95075EFC1FFA4CEA0016D0AC /* Globals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95075EFB1FFA4CEA0016D0AC /* Globals.swift */; };
+		95075EFF1FFA4F7D0016D0AC /* ScoreBoardCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95075EFE1FFA4F7D0016D0AC /* ScoreBoardCell.swift */; };
 		955B811A1FF6B63100722BCA /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955B81191FF6B63100722BCA /* Constants.swift */; };
 		955B811C1FF6B9F900722BCA /* Extentions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955B811B1FF6B9F900722BCA /* Extentions.swift */; };
 		955B811E1FF6BA2D00722BCA /* IJProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955B811D1FF6BA2D00722BCA /* IJProgressView.swift */; };
@@ -19,6 +22,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		95075EF91FFA4AEA0016D0AC /* ScoreScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScoreScreen.swift; sourceTree = "<group>"; };
+		95075EFB1FFA4CEA0016D0AC /* Globals.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Globals.swift; sourceTree = "<group>"; };
+		95075EFE1FFA4F7D0016D0AC /* ScoreBoardCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScoreBoardCell.swift; sourceTree = "<group>"; };
 		955B81191FF6B63100722BCA /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		955B811B1FF6B9F900722BCA /* Extentions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extentions.swift; sourceTree = "<group>"; };
 		955B811D1FF6BA2D00722BCA /* IJProgressView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IJProgressView.swift; sourceTree = "<group>"; };
@@ -43,6 +49,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		95075EFD1FFA4F630016D0AC /* CustomCells */ = {
+			isa = PBXGroup;
+			children = (
+				95075EFE1FFA4F7D0016D0AC /* ScoreBoardCell.swift */,
+			);
+			name = CustomCells;
+			sourceTree = "<group>";
+		};
 		952199A21FF6AB92006B0C2C /* AppDelegate */ = {
 			isa = PBXGroup;
 			children = (
@@ -55,6 +69,7 @@
 			isa = PBXGroup;
 			children = (
 				95E6ACFD1FF6AB3B00FC6643 /* ViewController.swift */,
+				95075EF91FFA4AEA0016D0AC /* ScoreScreen.swift */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -75,6 +90,7 @@
 				955B811D1FF6BA2D00722BCA /* IJProgressView.swift */,
 				955B81191FF6B63100722BCA /* Constants.swift */,
 				955B811B1FF6B9F900722BCA /* Extentions.swift */,
+				95075EFB1FFA4CEA0016D0AC /* Globals.swift */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -98,6 +114,7 @@
 		95E6ACFA1FF6AB3B00FC6643 /* Wikipedia Fill-in-the-blanks */ = {
 			isa = PBXGroup;
 			children = (
+				95075EFD1FFA4F630016D0AC /* CustomCells */,
 				952199A51FF6ABAF006B0C2C /* Resources */,
 				952199A41FF6ABA0006B0C2C /* Storyboards */,
 				952199A31FF6AB98006B0C2C /* ViewControllers */,
@@ -180,9 +197,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				95075EFA1FFA4AEA0016D0AC /* ScoreScreen.swift in Sources */,
 				955B811E1FF6BA2D00722BCA /* IJProgressView.swift in Sources */,
 				95E6ACFE1FF6AB3B00FC6643 /* ViewController.swift in Sources */,
+				95075EFF1FFA4F7D0016D0AC /* ScoreBoardCell.swift in Sources */,
 				95E6ACFC1FF6AB3B00FC6643 /* AppDelegate.swift in Sources */,
+				95075EFC1FFA4CEA0016D0AC /* Globals.swift in Sources */,
 				955B811C1FF6B9F900722BCA /* Extentions.swift in Sources */,
 				95E6AD041FF6AB3B00FC6643 /* Wikipedia_Fill_in_the_blanks.xcdatamodeld in Sources */,
 				955B811A1FF6B63100722BCA /* Constants.swift in Sources */,

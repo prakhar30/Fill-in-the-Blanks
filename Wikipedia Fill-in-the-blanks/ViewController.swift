@@ -38,11 +38,14 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     
     @IBAction func finishGameButton(_ sender: Any) {
         print(userGuess)
-        if (hiddenWord == userGuess){
-            print("You win")
-        }else{
-            print("you chutiya")
+        for i in 0..<10 {
+            if(shuffledHiddenWords[i] == userGuess[i]){
+                score += 1
+            }
         }
+        correctAnswer = shuffledHiddenWords
+        userAnswer = userGuess
+        performSegue(withIdentifier: "toScoreScreen", sender: self)
     }
     
     func getdata(){
