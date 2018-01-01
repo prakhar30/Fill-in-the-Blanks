@@ -10,6 +10,7 @@ import UIKit
 
 class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource, UIGestureRecognizerDelegate {
 
+    @IBOutlet weak var finishGameButton: UIButton!
     @IBOutlet weak var pickerView: UIPickerView!
     @IBOutlet weak var textView: UITextView!
     var inputData = ""
@@ -25,6 +26,7 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     override func viewDidLoad() {
         super.viewDidLoad()
         pickerView.isHidden = true
+        finishGameButton.isHidden = true
         let tap = UITapGestureRecognizer(target: self, action: #selector(pickerClose))
         tap.cancelsTouchesInView = false
         tap.delegate = self
@@ -71,6 +73,7 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
                     //                        tapGesture.numberOfTapsRequired = 1
                     //                        self.textView.addGestureRecognizer(tapGesture)
                     self.pickerView.reloadAllComponents()
+                    self.finishGameButton.isHidden = false
                 }
             })
             task.resume()
@@ -144,7 +147,7 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
             let rect = textView.firstRect(for: tRange!)
             
             let button = UIButton(frame: CGRect(x: rect.minX, y: rect.minY, width: 50, height: 20))
-            button.backgroundColor = .green
+            button.backgroundColor = .clear
             button.alpha = 0.5
             button.setTitle("", for: .normal)
             button.tag = i
