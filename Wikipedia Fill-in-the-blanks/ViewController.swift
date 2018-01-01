@@ -212,6 +212,7 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         print("orientation changed")
+        reactToOrientationChange()
     }
     
     func reactToOrientationChange(){
