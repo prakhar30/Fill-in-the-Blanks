@@ -54,21 +54,23 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         if let usableUrl = url {
             let request = URLRequest(url: usableUrl)
             let task = URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
-                if let data = data {
-                    DispatchQueue.main.async {
-                        let json = try? JSONSerialization.jsonObject(with: data, options: []) as! NSArray
-                        var mainData = "\(json![2])"
-                        mainData.remove(at: mainData.startIndex)
-                        mainData.remove(at: mainData.index(before: mainData.endIndex))
-                        self.stringToArray(data: mainData)
-                        self.buttonOverText()
-                        self.inputData = mainData
-//                        let tapGesture: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.tapResponse(recognizer:)))
-//                        tapGesture.numberOfTapsRequired = 1
-//                        self.textView.addGestureRecognizer(tapGesture)
-                        self.pickerView.reloadAllComponents()
-                        IJProgressView.shared.hideProgressView()
+                DispatchQueue.main.async {
+                    IJProgressView.shared.hideProgressView()
+                    guard let data = data, error == nil else {              // check for fundamental networking error
+                        self.alertBox(msg: "Network Error.")
+                        return
                     }
+                    let json = try? JSONSerialization.jsonObject(with: data, options: []) as! NSArray
+                    var mainData = "\(json![2])"
+                    mainData.remove(at: mainData.startIndex)
+                    mainData.remove(at: mainData.index(before: mainData.endIndex))
+                    self.stringToArray(data: mainData)
+                    self.buttonOverText()
+                    self.inputData = mainData
+                    //                        let tapGesture: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.tapResponse(recognizer:)))
+                    //                        tapGesture.numberOfTapsRequired = 1
+                    //                        self.textView.addGestureRecognizer(tapGesture)
+                    self.pickerView.reloadAllComponents()
                 }
             })
             task.resume()
@@ -206,6 +208,32 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         userGuess[buttonPressed] = shuffledHiddenWords[row]
         replaceSelectedWordIntext()
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        print("orientation changed")
+    }
+    
+    func reactToOrientationChange(){
+        for i in 0..<10 {
+            let copyText = textView.text as NSString
+            let range = copyText.range(of: "(___\(i)___)", options: .literal, range: NSMakeRange(0, copyText.length))
+            textView.layoutManager.ensureLayout(for: textView.textContainer)
+            let start = textView.position(from: textView.beginningOfDocument, offset: range.location)!
+            let end = textView.position(from: start, offset: range.length)!
+            let tRange = textView.textRange(from: start, to: end)
+            let rect = textView.firstRect(for: tRange!)
+            
+            buttons[i].frame = CGRect(x: rect.minX, y: rect.minY, width: 50, height: 20)
+        }
+    }
+    
+    func alertBox(msg: String) {
+        let refreshAlert = UIAlertController(title: "Error", message: "\(msg)", preferredStyle: UIAlertControllerStyle.alert)
+        refreshAlert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: { (action: UIAlertAction!) in
+            refreshAlert .dismiss(animated: true, completion: nil)
+        }))
+        present(refreshAlert, animated: true, completion: nil)
     }
 
     override func didReceiveMemoryWarning() {
